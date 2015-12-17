@@ -1,5 +1,9 @@
 /**
- * Created by debbie on 12/16/15.
+ * Deborah Ferguson
+ * CS 315 Honors --  Algorithms
+ * Department of Computer Science
+ * University of Kentucky
+ * December 17, 2015
  */
 import java.awt.*;
 import javax.swing.JPanel;
@@ -11,6 +15,7 @@ import javax.swing.Timer;
 
 public class Panel extends JPanel implements ActionListener {
 
+    //vatiables
     public ArrayList<State> solutions;
     int currentIndex = 0;
     Timer timer=new Timer(1000, this);
@@ -25,12 +30,12 @@ public class Panel extends JPanel implements ActionListener {
 
 
         g.setColor(Color.gray);
-        //first row
-        //first triangle
+        //draw triangle
         int[] xvalues={10,300,590};
         int[] yvalues={(int)(300+175*Math.sqrt(2)),(int)(300-175*Math.sqrt(2)),(int)(300+175*Math.sqrt(2))};
         g.fillPolygon(xvalues,yvalues,3);
 
+        //store the locations for all of the holes
         if(solutions.size()!=0) {
             int[][][] locations = new int[solutions.get(0).board.length][][];
             for(int i=0; i<locations.length; i++){
@@ -71,32 +76,15 @@ public class Panel extends JPanel implements ActionListener {
             locations[0][0][0]=275;
             locations[0][0][1]=150;
 
-//            g.fillOval(75, 470, 50, 50);
-//            g.fillOval(175, 470, 50, 50);
-//            g.fillOval(275, 470, 50, 50);
-//            g.fillOval(375, 470, 50, 50);
-//            g.fillOval(475, 470, 50, 50);
-
-//            g.fillOval(125, 390, 50, 50);
-//            g.fillOval(225, 390, 50, 50);
-//            g.fillOval(325, 390, 50, 50);
-//            g.fillOval(425, 390, 50, 50);
-
-//            g.fillOval(175, 310, 50, 50);
-//            g.fillOval(275, 310, 50, 50);
-//            g.fillOval(375, 310, 50, 50);
-
-//            g.fillOval(225, 230, 50, 50);
-//            g.fillOval(325, 230, 50, 50);
-
-//            g.fillOval(275, 150, 50, 50);
-
+            //paint the current states on the holes
              State current = solutions.get(currentIndex);
              for (int i = 0; i < current.board.length; i++) {
                 for (int j = 0; j < current.board[i].length; j++) {
+                    //black if hole
                     if (current.board[i][j] == 0) {
                         g.setColor(Color.black);
                     }
+                    //red if peg
                     else {
                         g.setColor(Color.red);
                     }
@@ -104,10 +92,10 @@ public class Panel extends JPanel implements ActionListener {
                 }
              }
 
-//            g.setColor(Color.black);
-//            g.setColor(Color.red);
+
         }
     }
+    //timer to go through the solution
     public void actionPerformed(ActionEvent ev){
         if(ev.getSource()==timer){
             if(currentIndex<solutions.size()-1)

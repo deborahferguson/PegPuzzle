@@ -1,19 +1,27 @@
 /**
- * Created by debbie on 12/16/15.
+ * Deborah Ferguson
+ * CS 315 Honors --  Algorithms
+ * Department of Computer Science
+ * University of Kentucky
+ * December 17, 2015
  */
 
 import java.util.*;
 
 public class State {
+    //board with 1 meaning peg 0 meaning hole
     public int[][] board;
+    //parent in order to trace back the order
     public State parent;
 
     //constructor an initial state
     public State(int size, int igap, int jgap){
+        //create the board
         board = new int[size][];
         for(int i=0; i<size; i++){
             board[i]=new int[i+1];
         }
+        //fill in the board
         for(int i=0; i<board.length; i++){
             for(int j=0; j<board[i].length; j++){
                 if(i==igap&&j==jgap)
@@ -22,6 +30,7 @@ public class State {
                     board[i][j]=1;
             }
         }
+        //has no parent
         parent = null;
 
     }
@@ -39,6 +48,7 @@ public class State {
 
     //print the board
     public void printBoard(){
+        //print spaces in order to make it look like a triangle when it prints
         int boardsize = board.length;
         for(int i=0; i<boardsize; i++){
             for(int n=0; n<boardsize-i; n++){
@@ -54,18 +64,19 @@ public class State {
     //find children states
     public ArrayList<State> childstates(){
         int size = board.length;
+        //array list of the children
         ArrayList<State> children = new ArrayList<State>();
         for(int i=0; i<board.length; i++){
             for(int j=0; j<board[i].length; j++){
                 //check neighbors for possible jumps
-                //currently set up for board of size 5
 
 
                 //[i+1][j], [i+2][j]
                 //[i+1][j+1], [i+2][j+2]
+
+                //if it has a peg
                 if(board[i][j]==1){
-//                  System.out.println(i);
-//                  System.out.println(j);
+
                     if(i<size-2){
                         if(j<(board[i].length)-2) {
                             if (board[i + 1][j + 1] == 1 && board[i + 2][j + 2] == 0){
@@ -82,6 +93,7 @@ public class State {
                                 childstate1[i][j] = 0;
                                 childstate1[i+1][j+1] = 0;
                                 childstate1[i+2][j+2] = 1;
+                                //add the state to the array list
                                 children.add(new State(childstate1, this));
                             }
                         }
@@ -99,6 +111,7 @@ public class State {
                             childstate2[i][j] = 0;
                             childstate2[i+1][j] = 0;
                             childstate2[i+2][j] = 1;
+                            //add the state to the array list
                             children.add(new State(childstate2,this));
                         }
                     }
@@ -121,6 +134,7 @@ public class State {
                                 childstate3[i][j] = 0;
                                 childstate3[i - 1][j - 1] = 0;
                                 childstate3[i - 2][j - 2] = 1;
+                                //add the state to the array list
                                 children.add(new State(childstate3,this));
                             }
                         }
@@ -139,6 +153,7 @@ public class State {
                                 childstate4[i][j] = 0;
                                 childstate4[i - 1][j] = 0;
                                 childstate4[i - 2][j] = 1;
+                                //add the state to the array list
                                 children.add(new State(childstate4,this));
                             }
                         }
@@ -160,6 +175,7 @@ public class State {
                             childstate5[i][j] = 0;
                             childstate5[i][j + 1] = 0;
                             childstate5[i][j + 2] = 1;
+                            //add the state to the array list
                             children.add(new State(childstate5,this));
                         }
                     }
@@ -178,17 +194,20 @@ public class State {
                             childstate6[i][j] = 0;
                             childstate6[i][j - 1] = 0;
                             childstate6[i][j - 2] = 1;
+                            //add the state to the array list
                             children.add(new State(childstate6,this));
                         }
                     }
                 }
             }
         }
-
+        //return the list of children
         return children;
     }
 
+    //check if it has reached the solution
     public boolean isFinal(){
+        //should only have one one
         int sum=0;
         boolean finished = false;
         for(int i=0; i<board.length; i++){
@@ -198,6 +217,7 @@ public class State {
                     break;
             }
         }
+        //if there is only one one, then it is done
         if(sum==1){
             finished = true;
         }
