@@ -2,18 +2,24 @@
  * Created by debbie on 12/10/15.
  */
 
+import oracle.jrockit.jfr.JFR;
+import java.awt.*;
+import javax.swing.*;
 import java.util.*;
 public class PegPuzzle {
 
     public static void main(String[] args){
         State firststate = new State(5,0,0);
+        boolean solvable = false;
 
         Stack<State> mystack = new Stack<State>();
         mystack.push(firststate);
         State current=mystack.peek();
         while(!mystack.isEmpty()){
+            //System.out.println(mystack.size());
             current = mystack.peek();
             if(current.isFinal()){
+                solvable=true;
                 break;
             }
             mystack.pop();
@@ -33,10 +39,21 @@ public class PegPuzzle {
             solutionpath.get(i).printBoard();
         }
 
-        /*for(int i=0; i<childrenoffirststate.size(); i++){
-            childrenoffirststate.get(i).printBoard();
-        }
-        */
+        if(solvable)
+            System.out.println("Solvable");
+        else
+            System.out.println("Not Solvable");
+
+
+        JFrame myframe = new JFrame();
+        Panel mypanel = new Panel();
+        mypanel.solutions=solutionpath;
+        myframe.setSize(600,600);
+        myframe.add(mypanel);
+        myframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        myframe.setVisible(true);
+
+        mypanel.setBackground(Color.cyan);
     }
 
 }
