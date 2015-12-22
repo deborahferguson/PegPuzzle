@@ -32,15 +32,44 @@ public class Panel extends JPanel implements ActionListener {
         g.setColor(Color.gray);
         //draw triangle
         int[] xvalues={10,300,590};
-        int[] yvalues={(int)(300+175*Math.sqrt(2)),(int)(300-175*Math.sqrt(2)),(int)(300+175*Math.sqrt(2))};
+        int[] yvalues={(int)(300+150*Math.sqrt(3)),(int)(300-150*Math.sqrt(3)),(int)(300+150*Math.sqrt(3))};
         g.fillPolygon(xvalues,yvalues,3);
+
+
+
 
         //store the locations for all of the holes
         if(solutions.size()!=0) {
+            int width = 500/(2*solutions.get(0).getBoard().length);
+
+            int firsty = (int)(300-150*Math.sqrt(3))+2*width/2;
+            int firstx = (int)(10+(2*width/2)*Math.sqrt(3));
+            int lastx = (int)(590-(2*width/2)*Math.sqrt(3));
+            int lasty = (int)(300+150*Math.sqrt(3)-2*width);
+
             int[][][] locations = new int[solutions.get(0).board.length][][];
-            for(int i=0; i<locations.length; i++){
-                locations[i] = new int[i+1][2];
-            }
+                for(int i=0; i<locations.length; i++){
+                    locations[i] = new int[i+1][3];
+                }
+
+                for(int i=0; i<locations.length; i++){
+                    if(i==0){
+                        locations[0][0][0]=300-width/2;
+                        locations[0][0][1]=firsty+width/2;
+                        locations[0][0][2]=width;
+                    }
+                    else {
+                        for (int j = 0; j < locations[i].length; j++) {
+                            int rowxfirst = 300 - i * (lastx - firstx) / (locations.length - 1) / 2;
+                            int rowxlast = 300 + i * (lastx - firstx) / (locations.length - 1) / 2;
+                            locations[i][j][0] = rowxfirst + j * ((rowxlast - rowxfirst) / (locations[i].length - 1))-width/2;
+                            locations[i][j][1] = firsty + i * ((lasty - firsty) / (locations.length - 1))+width/2;
+                            locations[i][j][2] = width;
+                        }
+                    }
+                }
+
+            /*
             locations[4][0][0]=75;
             locations[4][0][1]=470;
             locations[4][1][0]=175;
@@ -76,6 +105,7 @@ public class Panel extends JPanel implements ActionListener {
             locations[0][0][0]=275;
             locations[0][0][1]=150;
 
+*/
             //paint the current states on the holes
              State current = solutions.get(currentIndex);
              for (int i = 0; i < current.board.length; i++) {
@@ -88,7 +118,7 @@ public class Panel extends JPanel implements ActionListener {
                     else {
                         g.setColor(Color.red);
                     }
-                    g.fillOval(locations[i][j][0], locations[i][j][1], 50, 50);
+                    g.fillOval(locations[i][j][0], locations[i][j][1], locations[i][j][2], locations[i][j][2]);
                 }
              }
 

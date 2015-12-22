@@ -78,7 +78,9 @@ public class State {
                 if(board[i][j]==1){
 
                     if(i<size-2){
-                        if(j<(board[i].length)-2) {
+                        //down right
+                        if(j<i+1){
+//                        if(j<(board[i].length)-2) {
                             if (board[i + 1][j + 1] == 1 && board[i + 2][j + 2] == 0){
 //                                System.out.println("had a child");
                                 int[][] childstate1 = new int[size][];

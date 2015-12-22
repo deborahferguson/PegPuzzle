@@ -6,7 +6,6 @@
  * December 17, 2015
  */
 
-import oracle.jrockit.jfr.JFR;
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
@@ -15,7 +14,7 @@ public class PegPuzzle {
     //this contains the main algorithm and is used to solve the puzzle
     public static void main(String[] args){
         //the initial state
-        State firststate = new State(5,0,0);
+        State firststate = new State(5,3,2);
         boolean solvable = false;
         //uses a stack to implement a depth first search algorithm
         Stack<State> mystack = new Stack<State>();
