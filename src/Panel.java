@@ -6,22 +6,87 @@
  * December 17, 2015
  */
 import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.lang.*;
 import java.util.ArrayList;
+import java.util.Stack;
 import javax.swing.Timer;
 
 public class Panel extends JPanel implements ActionListener {
 
-    //vatiables
+    // Variables
     public ArrayList<State> solutions;
     int currentIndex = 0;
     Timer timer=new Timer(1000, this);
-
+    int[][][] locations;
+    int row = 0;
+    int rowPos = 0;
+    private JLabel boardSizesLabel;
+    private JComboBox boardSizes;
+    private JButton solveButton;
+    
     public Panel(){
-        timer.start();
+	setLayout(null);
+	setSize(600,600);
+	boardSizesLabel = new JLabel("Board Size:");
+	boardSizesLabel.setSize(80, 20);
+	boardSizesLabel.setLocation(20,20);
+	boardSizes = new JComboBox(new String[]{"3","4","5","6"});
+	boardSizes.setLocation(100,20);
+	boardSizes.setSize(100,20);
+	boardSizes.addActionListener(this);
+	solveButton = new JButton("Solve");
+	solveButton.setLocation(20,60);
+	solveButton.setSize(60,20);
+	solveButton.addActionListener(this);
+	add(boardSizesLabel);
+	add(boardSizes);
+	add(solveButton);
+	solutions = new ArrayList<State>();
+
+	//Mouse things
+	addMouseListener(new MouseAdapter() {
+		public void mousePressed(MouseEvent me) {
+		    int mouseX = me.getX();
+		    int mouseY = me.getY();
+
+		    // locations[i][j][0] -> x
+		    // locations[i][j][1] -> y
+		    // locations[i][j][2] -> width?
+		    for(int i=0; i<locations.length; i++) {
+			boolean found = false;
+			for(int j=0; j<locations[i].length; j++) {
+			    int radius = locations[i][j][2]/2;
+			    int centerX = locations[i][j][0]+radius;
+			    int centerY = locations[i][j][1]+radius;
+
+			    // Check if mouse clicked this hole
+			    double distance = Math.sqrt(Math.pow(centerX-mouseX,2) + Math.pow(centerY-mouseY,2));
+			    if(distance < radius) {
+				row = i;
+				rowPos = j;
+				found = true;
+				break;
+			    }
+			}
+			if(found) { break; }
+		    }
+
+		    currentIndex = 0;
+		    solutions = new ArrayList<State>();
+		    solutions.add(new State(new Integer((String)boardSizes.getSelectedItem()), row, rowPos));
+		    repaint();
+		}
+	    });
+	
+
     }
 
     public void paintComponent(Graphics g) {
@@ -47,7 +112,7 @@ public class Panel extends JPanel implements ActionListener {
             int lastx = (int)(590-(2*width/2)*Math.sqrt(3));
             int lasty = (int)(300+150*Math.sqrt(3)-2*width);
 
-            int[][][] locations = new int[solutions.get(0).board.length][][];
+            locations = new int[solutions.get(0).board.length][][];
                 for(int i=0; i<locations.length; i++){
                     locations[i] = new int[i+1][3];
                 }
@@ -128,11 +193,78 @@ public class Panel extends JPanel implements ActionListener {
     //timer to go through the solution
     public void actionPerformed(ActionEvent ev){
         if(ev.getSource()==timer){
-            if(currentIndex<solutions.size()-1)
+            if(currentIndex<solutions.size()-1) {
                 currentIndex++;
+	    } else {
+		timer.stop();
+	    }
             repaint();// this will call at every 1 second
         }
 
+	if(ev.getSource() == boardSizes) {
+	    System.out.println("Changed Size");
+	    currentIndex = 0;
+	    solutions = new ArrayList();
+	    solutions.add(new State(new Integer((String)boardSizes.getSelectedItem()), 0, 0));
+	    repaint();
+	}
+
+	if(ev.getSource() == solveButton) {
+	    solve(new Integer((String)boardSizes.getSelectedItem()), row, rowPos);
+	}
     }
 
+    private boolean solve(int size, int holeRow, int holeRowPos) {
+	//the initial state
+        State firststate = new State(size,holeRow,holeRowPos);
+        boolean solvable = false;
+        //uses a stack to implement a depth first search algorithm
+        Stack<State> mystack = new Stack<State>();
+        //adds the initial state
+        mystack.push(firststate);
+        State current=mystack.peek();
+        //while there are still states in the stack
+        while(!mystack.isEmpty()){
+            //System.out.println(mystack.size());
+            //look at the top element
+            current = mystack.peek();
+            //if it is the solution, stop now
+            if(current.isFinal()){
+                solvable=true;
+                break;
+            }
+            //pop of top element
+            mystack.pop();
+            //create children
+            ArrayList<State> children = current.childstates();
+            //add each child to the stack
+            for(int i=0; i<children.size(); i++){
+                mystack.push(children.get(i));
+            }
+        }
+        //working backwards to find the path to get to the solution
+        State newcurrent=current;
+        ArrayList<State> solutionpath = new ArrayList<State>();
+        solutionpath.add(newcurrent);
+        while(newcurrent.parent!=null){
+            newcurrent=newcurrent.parent;
+            solutionpath.add(0,newcurrent);
+        }
+        //print the path
+        for(int i=0; i<solutionpath.size(); i++){
+            solutionpath.get(i).printBoard();
+        }
+        //display whether or not it was solved
+        if(solvable) {
+            System.out.println("Solvable");
+	}
+        else {
+            System.out.println("Not Solvable");
+	}
+
+	currentIndex = 0;
+	timer.start();
+	solutions = solutionpath;
+	return solvable;
+    }
 }

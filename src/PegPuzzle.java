@@ -13,7 +13,21 @@ public class PegPuzzle {
 
     //this contains the main algorithm and is used to solve the puzzle
     public static void main(String[] args){
-        //the initial state
+        //This is the graphical aspect
+        JFrame myframe = new JFrame();
+        Panel mypanel = new Panel();
+	//        mypanel.solutions=solutionpath;
+        myframe.setSize(600,600);
+	myframe.setLayout(null);
+	myframe.setLocationRelativeTo(null); // centers the thing
+        myframe.add(mypanel);
+        myframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        myframe.setVisible(true);
+        mypanel.setBackground(Color.cyan);
+    }
+
+    public static boolean solve() {
+	//the initial state
         State firststate = new State(5,3,2);
         boolean solvable = false;
         //uses a stack to implement a depth first search algorithm
@@ -53,22 +67,14 @@ public class PegPuzzle {
             solutionpath.get(i).printBoard();
         }
         //display whether or not it was solved
-        if(solvable)
+        if(solvable) {
             System.out.println("Solvable");
-        else
+	}
+        else {
             System.out.println("Not Solvable");
+	}
 
-
-        //This is the graphical aspect
-        JFrame myframe = new JFrame();
-        Panel mypanel = new Panel();
-        mypanel.solutions=solutionpath;
-        myframe.setSize(600,600);
-        myframe.add(mypanel);
-        myframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        myframe.setVisible(true);
-
-        mypanel.setBackground(Color.cyan);
+	return solvable;
     }
-
+    
 }
