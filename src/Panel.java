@@ -29,6 +29,7 @@ public class Panel extends JPanel implements ActionListener {
     int row = 0;
     int rowPos = 0;
     private JLabel boardSizesLabel;
+    private JLabel instructions;
     private JComboBox boardSizes;
     private JButton solveButton;
     
@@ -36,19 +37,25 @@ public class Panel extends JPanel implements ActionListener {
 	setLayout(null);
 	setSize(600,600);
 	boardSizesLabel = new JLabel("Board Size:");
-	boardSizesLabel.setSize(80, 20);
+	boardSizesLabel.setSize(100, 20);
 	boardSizesLabel.setLocation(20,20);
 	boardSizes = new JComboBox(new String[]{"3","4","5","6"});
-	boardSizes.setLocation(100,20);
+	boardSizes.setLocation(120,20);
 	boardSizes.setSize(100,20);
 	boardSizes.addActionListener(this);
 	solveButton = new JButton("Solve");
-	solveButton.setLocation(20,60);
-	solveButton.setSize(60,20);
+	solveButton.setLocation(20,100);
+	solveButton.setSize(80,20);
 	solveButton.addActionListener(this);
+    solveButton.setVisible(false);
+    instructions = new JLabel("Click a peg to be the initial hole");
+    instructions.setLocation(20,60);
+    instructions.setSize(300,20);
+    instructions.setVisible(false);
 	add(boardSizesLabel);
 	add(boardSizes);
 	add(solveButton);
+    add(instructions);
 	solutions = new ArrayList<State>();
 
 	//Mouse things
@@ -202,10 +209,11 @@ public class Panel extends JPanel implements ActionListener {
         }
 
 	if(ev.getSource() == boardSizes) {
-	    System.out.println("Changed Size");
 	    currentIndex = 0;
 	    solutions = new ArrayList();
 	    solutions.add(new State(new Integer((String)boardSizes.getSelectedItem()), 0, 0));
+        solveButton.setVisible(true);
+        instructions.setVisible(true);
 	    repaint();
 	}
 
